@@ -8,8 +8,18 @@
 var App = {};
 
 App.init = function() {
+
+  // make get request to server to generate new board
+  var requester = new HttpClient();
+  requester.get('http://coderboard-dev.elasticbeanstalk.com/new', function (reponse) {
+    console.log(response.body);
+  });
+
   // Connect to sockets.io with unique ioRoom ID - either a new whiteboard or used and saved previously by [sockets.js](../docs/sockets.html)
-  var ioRoom = window.location.href;
+  // var ioRoom = window.location.href;
+  var roomId = window.location.pathname.slice(1);
+  var ioRoom = 'http://coderboard-dev.elasticbeanstalk.com/' + roomId;
+  console.log(roomId);
   App.socket = io(ioRoom);
 
 
