@@ -52,6 +52,27 @@ app.get('/new', function(req, res) {
   });
 });
 
+// **serve whiteboard on chrome extension**
+app.get('/api/new', function(req, res) {
+  console.log('hitting /api/new');
+  // Create a new mongoose board model.
+  var id = utils.createId();
+  var board = new Board.boardModel({
+    id: id,
+    users: 0,
+    strokes: []
+  });
+  board.save()
+  .then(function (board) {
+    console.log(board);
+    res.redirect('/api/' + id);
+  })
+  .catch(function (err) {
+    console.log(err);
+    res.redirect('/');
+  });
+});
+
 
 // **Wildcard route & board id handler.**
 app.get('/*', function(req, res) {
@@ -68,6 +89,27 @@ app.get('/*', function(req, res) {
     handleSocket(req.url, savedBoard, io);
     // Send back whiteboard html template.
     res.sendFile(__dirname + '/public/board.html');
+  })
+  .catch(function (err) {
+    res.redirect('/');
+  });
+});
+
+// **Wildcard route & board id handler for chrome extension**
+app.get('/api/*', function(req, res) {
+  console.log('hitting api/*');
+  var id = req.url.slice(1);
+  Board.boardModel.findOne({id: id})
+  .then(function (board) {
+    board.users++;
+    return  board.save();
+  })
+  .then(function (savedBoard) {
+    console.log(savedBoard.users);
+    // Invoke [request handler](../documentation/sockets.html) for a new socket connection
+    // with board id as the Socket.io namespace.
+    handleSocket(req.url, savedBoard, io);
+    // Send back whiteboard html template.
   })
   .catch(function (err) {
     res.redirect('/');
