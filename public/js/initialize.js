@@ -28,7 +28,10 @@ $(function() {
     if (!App.isAnotherUserActive) {
      
       console.log("User has started to draw.");
-      start(e.offsetX, e.offsetY);
+      console.log(App.drawType);
+      if (App.drawType = 'free') {
+        start(e.offsetX, e.offsetY);
+      }
 
 
     } else {
@@ -42,8 +45,9 @@ $(function() {
     // Allow user drawing only if other users are not drawing.
     if (!App.isAnotherUserActive) {
       if (App.mouse.click) {
-
-        drag(e.offsetX, e.offsetY);
+        if (App.drawType = 'free') {
+          drag(e.offsetX, e.offsetY);
+        }
       }
     } else {
       console.log('Another user is drawing - please wait.');
@@ -53,8 +57,9 @@ $(function() {
   // On mouse dragend detection, tell socket that we have finished drawing.
   App.canvas.on('dragend', function(e) {
     if (!App.isAnotherUserActive) {
-
-      end();
+      if (App.drawType = 'free') {
+        end();
+      }
 
     } else {
       console.log('Another user is drawing - please wait.');
@@ -137,5 +142,18 @@ $(function() {
 
     // Tell socket that we've finished sending data.
     App.socket.emit('end', null);
-  }
+  };
+
+  var drawRectangle = {
+    start: function (x, y) {
+
+    },
+    drag: function (x, y) {
+
+    },
+    end: function (x, y) {
+
+    }
+  };
 });
+

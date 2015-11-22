@@ -48,6 +48,9 @@ App.init = function() {
   App.canvas[0].height = window.innerHeight * 0.7;
   App.context = App.canvas[0].getContext("2d");
 
+  App.context.fillStyle = '#000000';
+  App.context.fillRect(100,150, 200, 250);
+
   // Set properties of the mouse click.
   App.mouse = {
     click: false,
@@ -64,6 +67,8 @@ App.init = function() {
     lineWidth: 2,
     lineCap: 'round'
   };
+
+  App.drawType = 'free';
 
   // ```App.isAnotherUserActive``` is a Boolean that signals whether another user is currently drawing. The current implementation is such that only 1 user can draw at a time, i.e. simultaneous drawing is forbidden. To get rid of this functionality, remove  ```App.isAnotherUserActive``` and conditional loops that require it. 
   App.isAnotherUserActive = false;

@@ -29,18 +29,25 @@
       if (option === 'eraser') {
         console.log("The user is using the eraser.");
         $('html,body').css('cursor','crosshair');
+        $rootScope.app.drawType = 'free';
         $rootScope.app.pen.lineWidth = 50;
         $rootScope.app.pen.strokeStyle = '#fff';
       } else {
         console.log("The user is using the pen.");
         $rootScope.app.pen.lineWidth = 5;
         console.log($rootScope.app.pen.strokeStyle);
+        $rootScope.app.drawType = 'free';
         $rootScope.app.pen.strokeStyle = option;
         $rootScope.app.pen.lineWidth = 2;
       }
     };
+    var drawSquare = function () {
+      console.log('drawing square');
+      $rootScope.app.drawType = 'rectangle';
+    };
     return {
-      changePen: changePen
+      changePen: changePen,
+      drawSquare: drawSquare
     };
   }
 
@@ -50,6 +57,9 @@
       tools.changePen(option);
       console.log("The user chose the tool", $element);
       $('input').not($('#' + option)).attr('checked', false);
+    };
+    self.drawSquare = function () {
+      tools.drawSquare();
     };
   }
 
