@@ -27,7 +27,11 @@ $(function() {
       x: e.offsetX,
       y: e.offsetY
     };
-
+    App.previousDrag = {
+      x: e.offsetX,
+      y: e.offsetY
+    };
+    
     // Allow user drawing only if other users are not drawing.
     if (!App.isAnotherUserActive) {
      
@@ -71,7 +75,7 @@ $(function() {
       if (App.drawType === 'free') {
         end();
       } else if (App.drawType === 'rectangle') {
-        drawRectangle.end();
+        drawRectangle.end(App.previousDrag.x, App.previousDrag.y);
       }
     } else {
       console.log('Another user is drawing - please wait.');
@@ -176,6 +180,7 @@ $(function() {
       App.drawRectangle(App.startDrag.x, App.startDrag.y, x, y);
     },
     end: function (x, y) {
+      console.log(App.startDrag.x, ' ', App.startDrag.y, ' ', x, ' ', y);
       App.socket.emit('start', App.pen);
       App.socket.emit('drag', [App.startDrag.x, App.startDrag.y]);
       App.socket.emit('drag', [App.startDrag.x, y]);
@@ -183,7 +188,7 @@ $(function() {
       App.socket.emit('drag', [x, App.startDrag.y]);
       App.socket.emit('drag', [App.startDrag.x, App.startDrag.y]);
       App.socket.emit('end', null);
-      
+
     }
   };
 });

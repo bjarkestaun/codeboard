@@ -135,12 +135,7 @@ App.init = function() {
     App.context.moveTo(moveToX, moveToY);
   };
 
-
-
-  // **Socket events**
-
-  // Draw the board upon join.
-  App.socket.on('join', function(board) {
+  App.redrawBoard = function (board) {
     console.log("Joining the board.");
 
     // Check for null board data.
@@ -161,8 +156,14 @@ App.init = function() {
         }
       }
     }
-  });
+  };
 
+  // **Socket events**
+
+  // Draw the board upon join.
+  App.socket.on('join', function (board) {
+    App.redrawBoard(board)
+  });
 
   // If another user is drawing, App.socket will receive a 'drag' event. App listens for the drag event and renders the drawing element created by the other user. 
   // Note that App prevents the current user from drawing while the other user is still drawing. 
