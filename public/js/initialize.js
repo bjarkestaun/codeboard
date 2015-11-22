@@ -29,11 +29,11 @@ $(function() {
      
       console.log("User has started to draw.");
       console.log(App.drawType);
-      if (App.drawType = 'free') {
+      if (App.drawType === 'free') {
         start(e.offsetX, e.offsetY);
+      } else {
+        console.log('drawing square');
       }
-
-
     } else {
       console.log('Another user is drawing - please wait.');
     }
@@ -45,8 +45,10 @@ $(function() {
     // Allow user drawing only if other users are not drawing.
     if (!App.isAnotherUserActive) {
       if (App.mouse.click) {
-        if (App.drawType = 'free') {
+        if (App.drawType === 'free') {
           drag(e.offsetX, e.offsetY);
+        } else {
+          console.log('drawing square');
         }
       }
     } else {
@@ -57,10 +59,11 @@ $(function() {
   // On mouse dragend detection, tell socket that we have finished drawing.
   App.canvas.on('dragend', function(e) {
     if (!App.isAnotherUserActive) {
-      if (App.drawType = 'free') {
+      if (App.drawType === 'free') {
         end();
+      } else {
+        console.log('drawing square');
       }
-
     } else {
       console.log('Another user is drawing - please wait.');
     }
