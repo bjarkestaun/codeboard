@@ -23,6 +23,10 @@ $(function() {
 
   // On mousedown detection, initialize drawing properties based on mouse coordinates.
   App.canvas.on('mousedown', function(e) {
+    App.startDrag = {
+      x: e.offsetX,
+      y: e.offsetY
+    };
 
     // Allow user drawing only if other users are not drawing.
     if (!App.isAnotherUserActive) {
@@ -31,8 +35,8 @@ $(function() {
       console.log(App.drawType);
       if (App.drawType === 'free') {
         start(e.offsetX, e.offsetY);
-      } else {
-        console.log('drawing square');
+      } else if (App.drawType === 'rectangle') {
+        drawRectangle.start(e.offsetX, e.offsetY);
       }
     } else {
       console.log('Another user is drawing - please wait.');
@@ -47,13 +51,18 @@ $(function() {
       if (App.mouse.click) {
         if (App.drawType === 'free') {
           drag(e.offsetX, e.offsetY);
-        } else {
-          console.log('drawing square');
+        } else if (App.drawType === 'rectangle') {
+          drawRectangle.drag(e.offsetX, e.offsetY);
         }
       }
     } else {
       console.log('Another user is drawing - please wait.');
     }
+
+    App.previousDrag = {
+      x: e.offsetX,
+      y: e.offsetY
+    };
   });
 
   // On mouse dragend detection, tell socket that we have finished drawing.
@@ -61,8 +70,8 @@ $(function() {
     if (!App.isAnotherUserActive) {
       if (App.drawType === 'free') {
         end();
-      } else {
-        console.log('drawing square');
+      } else if (App.drawType === 'rectangle') {
+        drawRectangle.end();
       }
     } else {
       console.log('Another user is drawing - please wait.');
@@ -149,13 +158,32 @@ $(function() {
 
   var drawRectangle = {
     start: function (x, y) {
+      App.mouse.click = true;
+      App.mouse.x = x;
+      App.mouse.y = y;
 
+      // ```App.initializeMouseDown``` is from [app.js](../docs/app.html) where it initializes the pen and canvas before rendeirng.
+      App.initializeMouseDown(App.pen, App.mouse.x, App.mouse.y);
+
+      // Emit the pen object through socket. 
+      App.socket.emit('start', App.pen);
+
+      // Add the first mouse coordinates to the ```stroke``` array for storage.
+      App.stroke.push([App.mouse.x, App.mouse.Y]);
     },
     drag: function (x, y) {
-
+      App.removeRectangle(App.startDrag.x, App.startDrag.y, App.previousDrag.x, App.previousDrag.y);
+      App.drawRectangle(App.startDrag.x, App.startDrag.y, x, y);
     },
     end: function (x, y) {
-
+      App.socket.emit('start', App.pen);
+      App.socket.emit('drag', [App.startDrag.x, App.startDrag.y]);
+      App.socket.emit('drag', [App.startDrag.x, y]);
+      App.socket.emit('drag', [x, y]);
+      App.socket.emit('drag', [x, App.startDrag.y]);
+      App.socket.emit('drag', [App.startDrag.x, App.startDrag.y]);
+      App.socket.emit('end', null);
+      
     }
   };
 });

@@ -48,9 +48,6 @@ App.init = function() {
   App.canvas[0].height = window.innerHeight * 0.7;
   App.context = App.canvas[0].getContext("2d");
 
-  App.context.fillStyle = '#000000';
-  App.context.fillRect(100,150, 200, 250);
-
   // Set properties of the mouse click.
   App.mouse = {
     click: false,
@@ -70,6 +67,16 @@ App.init = function() {
 
   App.drawType = 'free';
 
+  App.startDrag = {
+    x: undefined,
+    y: undefined
+  };
+
+  App.previousDrag = {
+    x: undefined,
+    y: undefined
+  };
+
   // ```App.isAnotherUserActive``` is a Boolean that signals whether another user is currently drawing. The current implementation is such that only 1 user can draw at a time, i.e. simultaneous drawing is forbidden. To get rid of this functionality, remove  ```App.isAnotherUserActive``` and conditional loops that require it. 
   App.isAnotherUserActive = false;
 
@@ -87,6 +94,15 @@ App.init = function() {
   App.draw = function(x, y) {
     App.context.lineTo(x, y);
     App.context.stroke();
+  };
+
+  App.drawRectangle = function (x1, y1, x2, y2) {
+    App.context.fillStyle = 'rgba(32, 32, 32, 0.5)';
+    App.context.fillRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
+  };
+
+  App.removeRectangle = function (x1, y1, x2, y2) {
+    App.context.clearRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
   };
 
   App.touchDraw = function (e) {
