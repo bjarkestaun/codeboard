@@ -31,7 +31,7 @@ $(function() {
       x: e.offsetX,
       y: e.offsetY
     };
-    
+
     // Allow user drawing only if other users are not drawing.
     if (!App.isAnotherUserActive) {
      
@@ -126,7 +126,8 @@ $(function() {
     App.socket.emit('start', App.pen);
 
     // Add the first mouse coordinates to the ```stroke``` array for storage.
-    App.stroke.push([App.mouse.x, App.mouse.Y]);
+    App.stroke.push([App.mouse.x, App.mouse.y]);
+    App.socket.emit('drag', [App.mouse.x, App.mouse.y]);
   }
 
   function drag (xCoord, yCoord) {
@@ -154,6 +155,11 @@ $(function() {
     console.log("Drawing is finished and its data is being pushed to the server", [App.stroke, App.pen]);
 
     // Empty the App.stroke array.
+    var finishedStroke = {
+      pen: App.pen,
+      stroke: App.stroke
+    };
+    App.board.strokes.push(finishedStroke);
     App.stroke = [];
 
     // Tell socket that we've finished sending data.
@@ -176,11 +182,7 @@ $(function() {
       App.stroke.push([App.mouse.x, App.mouse.Y]);
     },
     drag: function (x, y) {
-      App.removeRectangle(App.startDrag.x, App.startDrag.y, App.previousDrag.x, App.previousDrag.y);
-      App.drawRectangle(App.startDrag.x, App.startDrag.y, x, y);
-    },
-    end: function (x, y) {
-      console.log(App.startDrag.x, ' ', App.startDrag.y, ' ', x, ' ', y);
+      // App.socket.emit('removeLast');
       App.socket.emit('start', App.pen);
       App.socket.emit('drag', [App.startDrag.x, App.startDrag.y]);
       App.socket.emit('drag', [App.startDrag.x, y]);
@@ -188,7 +190,18 @@ $(function() {
       App.socket.emit('drag', [x, App.startDrag.y]);
       App.socket.emit('drag', [App.startDrag.x, App.startDrag.y]);
       App.socket.emit('end', null);
-
+      console.log(App.board);
+    },
+    end: function (x, y) {
+      App.socket.emit('removeLast');
+      App.socket.emit('start', App.pen);
+      App.socket.emit('drag', [App.startDrag.x, App.startDrag.y]);
+      App.socket.emit('drag', [App.startDrag.x, y]);
+      App.socket.emit('drag', [x, y]);
+      App.socket.emit('drag', [x, App.startDrag.y]);
+      App.socket.emit('drag', [App.startDrag.x, App.startDrag.y]);
+      App.socket.emit('end', null);
+      console.log(App.board);
     }
   };
 });

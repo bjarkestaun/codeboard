@@ -21,6 +21,7 @@ App.init = function() {
   // Connect to sockets.io with unique ioRoom ID - either a new whiteboard or used and saved previously by [sockets.js](../docs/sockets.html)
   var ioRoom = window.location.href;
   App.socket = io(ioRoom);
+  App.board;
 
 
   //**Video Chat Functionality** 
@@ -162,7 +163,8 @@ App.init = function() {
 
   // Draw the board upon join.
   App.socket.on('join', function (board) {
-    App.redrawBoard(board)
+    App.board = board;
+    App.redrawBoard(board);
   });
 
   // If another user is drawing, App.socket will receive a 'drag' event. App listens for the drag event and renders the drawing element created by the other user. 

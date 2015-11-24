@@ -11,7 +11,7 @@ var Board = require('../db/board');
 var connect = function(boardUrl, board, io) {
   // Set the Socket.io namespace to the boardUrl.
   var whiteboard = io.of(boardUrl);
-  
+
   whiteboard.once('connection', function(socket) {
     //Get the board that the socket is connected to.
     var id = socket.nsp.name.slice(1);
@@ -47,6 +47,19 @@ var connect = function(boardUrl, board, io) {
       socket.broadcast.emit('drag', payload);
     });
 
+    socket.on('removeLast', function () {
+      Board.boardModel.findOne({id: id})
+      .then(function (board) {
+        if(board.strokes.length) {
+          board.strokes.splice(board.strokes.length - 1, 1);
+        }
+        return board.save();
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    })
+
     //When stroke is finished, add it to our db.
     socket.on('end', function() {
       var finishedStroke = socket.stroke;
@@ -54,10 +67,7 @@ var connect = function(boardUrl, board, io) {
 
       //Update the board with the new stroke.
       Board.boardModel.update({id: id},{$push: {strokes: finishedStroke} },{upsert:true},function(err, board){
-        if(err){ console.log(err); }
-        else {
-          console.log("Successfully added");
-        }
+        if(err) console.log(err);
       });
 
       // Emit end event to everyone but the person who stopped drawing.
