@@ -73,6 +73,7 @@ $(function() {
 
   // On mouse dragend detection, tell socket that we have finished drawing.
   App.canvas.on('dragend', function(e) {
+    console.log('before if');
     if (!App.isAnotherUserActive) {
       if (App.drawType === 'free') {
         end();
