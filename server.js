@@ -27,8 +27,6 @@ app.use(session({
   cookie: { maxAge: 67967000000 }
 }));
 
-
-
 // **Static folder for serving application assets**
 app.use('/', express.static(__dirname + '/public'));
 
