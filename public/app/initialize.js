@@ -39,20 +39,15 @@ $(function() {
       x: e.offsetX,
       y: e.offsetY
     };
-    console.log('mousedown');
-    console.log(App.startDrag);
 
     // Allow user drawing only if other users are not drawing.
     if (!App.isAnotherUserActive) {     
-      console.log("User has started to draw.");
-      console.log(App.drawType);
       if (App.drawType === 'free') {
         start(e.offsetX, e.offsetY);
       } else if (App.drawType === 'rectangle') {
         drawRectangle.start(e.offsetX, e.offsetY);
       }
     } else {
-      console.log('Another user is drawing - please wait.');
     }
   });
 
@@ -69,7 +64,6 @@ $(function() {
         }
       }
     } else {
-      console.log('Another user is drawing - please wait.');
     }
     App.previousDrag = {
       x: e.offsetX,
@@ -79,16 +73,13 @@ $(function() {
 
   // On mouse dragend detection, tell socket that we have finished drawing.
   App.canvas.on('dragend', function(e) {
-    console.log('before if');
     if (!App.isAnotherUserActive) {
       if (App.drawType === 'free') {
         end();
       } else if (App.drawType === 'rectangle') {
-        console.log('after if');
         drawRectangle.end(App.previousDrag.x, App.previousDrag.y);
       }
     } else {
-      console.log('Another user is drawing - please wait.');
     }
   });
 
@@ -106,7 +97,6 @@ $(function() {
   }, false);
 
   touchZone.addEventListener("touchmove", function (e) {
-    console.log('touching');
     e.preventDefault();
     if (lastPt !== null) {
       if (App.mouse.click) {
@@ -149,7 +139,6 @@ $(function() {
 
     // Render the drawing.
     App.draw(x, y);
-    console.log("Currently drawing coordinates", [x, y]);
 
     // Continue to push coordinates to stroke array (as part of storage).
     App.stroke.push([x, y]);
@@ -161,8 +150,6 @@ $(function() {
   function end () {
     App.mouse.drag = false;
     App.mouse.click = false;
-
-    console.log("Drawing is finished and its data is being pushed to the server", [App.stroke, App.pen]);
 
     // Empty the App.stroke array.
     var finishedStroke = {

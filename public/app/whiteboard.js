@@ -35,7 +35,6 @@
 
     var toggle = function () {
       keyDisplay = !keyDisplay;
-      console.log(keyDisplay);
     };
 
     var state = function () {
@@ -51,22 +50,18 @@
   function tools ($rootScope) {
     var changePen = function(option) {
       if (option === 'eraser') {
-        console.log("The user is using the eraser.");
         $('html,body').css('cursor','crosshair');
         $rootScope.app.drawType = 'free';
         $rootScope.app.pen.lineWidth = 50;
         $rootScope.app.pen.strokeStyle = '#fff';
       } else {
-        console.log("The user is using the pen.");
         $rootScope.app.pen.lineWidth = 5;
-        console.log($rootScope.app.pen.strokeStyle);
         $rootScope.app.drawType = 'free';
         $rootScope.app.pen.strokeStyle = option;
         $rootScope.app.pen.lineWidth = 2;
       }
     };
     var drawSquare = function () {
-      console.log('drawing square');
       $rootScope.app.drawType = 'rectangle';
     };
     var removeLast = function () {
@@ -83,7 +78,6 @@
     var self = this;
     self.changePen = function (option) {
       tools.changePen(option);
-      console.log("The user chose the tool", $element);
       $('input').not($('#' + option)).attr('checked', false);
     };
     self.boardOut = false;
@@ -104,8 +98,6 @@
   function switchBoardsCtrl ($http, $location) {
     var self = this;
     self.switchBoards = function () {
-      console.log('running');
-      console.log('/' + self.boardId);
       document.location = '/' + self.boardId;
     };
   }

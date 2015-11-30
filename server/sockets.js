@@ -50,8 +50,6 @@ var connect = function(boardUrl, board, io) {
     //When stroke is finished, add it to our db.
     socket.on('end', function() {
       var finishedStroke = socket.stroke;
-      console.log('end');
-      console.log(finishedStroke);
 
       //Update the board with the new stroke.
       Board.boardModel.update({id: id},{$push: {strokes: finishedStroke} },{upsert:true},function(err, board){
@@ -69,7 +67,6 @@ var connect = function(boardUrl, board, io) {
     });
 
     socket.on('removeLastSquare', function (startCoords) {
-      console.log('remove last');
       Board.boardModel.findOne({id: id})
       .then(function (board) {
         if (board.strokes.length) {
@@ -90,7 +87,6 @@ var connect = function(boardUrl, board, io) {
     });
 
     socket.on('removeLast', function (startCoords) {
-      console.log('remove last');
       Board.boardModel.findOne({id: id})
       .then(function (board) {
         if (board.strokes.length) {
@@ -111,7 +107,6 @@ var connect = function(boardUrl, board, io) {
     socket.on('getBoard', function () {
       Board.boardModel.findOne({id: id})
       .then(function (board) {
-        console.log('get board');
         socket.emit('refreshBoard', board);
         socket.broadcast.emit('refreshBoard', board);
       })

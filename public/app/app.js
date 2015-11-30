@@ -90,7 +90,6 @@ App.init = function() {
   };
 
   App.removeRectangle = function (x1, y1, x2, y2) {
-    console.log('remove rect', x1, ' ', y1, ' ', x2, ' ', y2);
     App.context.strokeStyle = 'rgba(255, 255, 255, 0.3)';
     App.context.strokeRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
   };
@@ -107,7 +106,6 @@ App.init = function() {
   };
 
   App.touchEnd = function(e) {
-    console.log('touching ended');
     e.preventDefault();
     lastPt = null;
   };
@@ -126,7 +124,6 @@ App.init = function() {
   };
 
   App.redrawBoard = function (board) {
-    console.log(board);
     // Check for null board data.
     if (board) {
       for (var i = 0; i < board.strokes.length; i++) {
@@ -136,7 +133,6 @@ App.init = function() {
           var strokesArray = board.strokes[i].path;
           var penProperties = board.strokes[i].pen;
           App.initializeMouseDown(penProperties, strokesArray[0][0], strokesArray[0][1]);
-          console.log(strokesArray);
           // Draw the path according to the strokesArray (array of coordinate tuples).
           for (var j = 0; j < strokesArray.length; j++) {
             App.draw(strokesArray[j][0], strokesArray[j][1]);
@@ -152,7 +148,6 @@ App.init = function() {
   };
 
   App.removeLast = function () {
-    console.log('remove last');
     App.socket.emit('removeLast');
     App.socket.emit('getBoard');
   }
@@ -166,41 +161,15 @@ App.init = function() {
   });
 
   App.socket.on('refreshBoard', function (board) {
-    console.log('refreshing');
     App.clearBoard();
     App.board = board;
     App.redrawBoard(board);
   });
   
-  // App.socket.on('join', function(board) {
-  //   console.log('Joining the board.');
-
-  //   // Check for null board data.
-  //   if (board) {
-  //     for (var i = 0; i < board.strokes.length; i++) {
-  //       // Check for null stroke data.
-  //       if (board.strokes[i]) {
-  //         // Set pen and draw path.
-  //         var strokesArray = board.strokes[i].path;
-  //         var penProperties = board.strokes[i].pen;
-  //         App.initializeMouseDown(penProperties, strokesArray[0][0], strokesArray[0][1]);
-
-  //         // Draw the path according to the strokesArray (array of coordinate tuples).
-  //         for (var j = 0; j < strokesArray.length; j++) {
-  //           App.draw(strokesArray[j][0], strokesArray[j][1]);
-  //         }
-
-  //         App.context.closePath();
-  //       }
-  //     }
-  //   }
-  // });
-
   // If another user is drawing, App.socket will receive a 'drag' event. App listens for the drag event and renders the drawing element created by the other user.
   // Note that App prevents the current user from drawing while the other user is still drawing.
   App.socket.on('drag', function(data) {
     App.isAnotherUserActive = true;
-    console.log('Receiving data from another user:', data);
 
     // ```App.prevPixel``` is an array of the previous coordinates sent, so drawing is smoothly rendered across different browsers.
     // If the ```App.prevPixel``` array is empty (i.e., this is the first pixel of the drawn element), then prevPixel is set as the coordinates of the current mouseclick.
