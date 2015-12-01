@@ -123,6 +123,7 @@
         })
       .then(function (response) {
         console.log('signin response received');
+        console.log(response);
         document.location = '/new';
       })
       .catch(function (err) {
